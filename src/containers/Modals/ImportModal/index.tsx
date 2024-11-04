@@ -1,14 +1,14 @@
 import React from "react";
 import type { ModalProps } from "@mantine/core";
-import { Modal, Group, Button, TextInput, Stack, Divider, Paper, Text } from "@mantine/core";
+import { Modal, Group, Button, TextInput, Stack, Paper, Text } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
+import { event as gaEvent } from "nextjs-google-analytics";
 import toast from "react-hot-toast";
 import { AiOutlineUpload } from "react-icons/ai";
 import type { FileFormat } from "src/enums/file.enum";
-import { gaEvent } from "src/lib/utils/gaEvent";
 import useFile from "src/store/useFile";
 
-export const ImportModal: React.FC<ModalProps> = ({ opened, onClose }) => {
+export const ImportModal = ({ opened, onClose }: ModalProps) => {
   const [url, setURL] = React.useState("");
   const [file, setFile] = React.useState<File | null>(null);
 
@@ -20,7 +20,7 @@ export const ImportModal: React.FC<ModalProps> = ({ opened, onClose }) => {
       setFile(null);
 
       toast.loading("Loading...", { id: "toastFetch" });
-      gaEvent("Import Modal", "fetch url");
+      gaEvent("fetch_url");
 
       return fetch(url)
         .then(res => res.json())
@@ -42,7 +42,7 @@ export const ImportModal: React.FC<ModalProps> = ({ opened, onClose }) => {
         onClose();
       });
 
-      gaEvent("Import Modal", "import file", format);
+      gaEvent("import_file", { label: format });
     }
   };
 
@@ -65,7 +65,7 @@ export const ImportModal: React.FC<ModalProps> = ({ opened, onClose }) => {
           placeholder="URL of JSON to fetch"
           data-autofocus
         />
-        <Paper radius="md" style={{ cursor: "pointer" }} withBorder>
+        <Paper radius="md" style={{ cursor: "pointer" }}>
           <Dropzone
             onDrop={files => setFile(files[0])}
             onReject={files => toast.error(`Unable to load file ${files[0].file.name}`)}
@@ -93,7 +93,6 @@ export const ImportModal: React.FC<ModalProps> = ({ opened, onClose }) => {
           </Dropzone>
         </Paper>
       </Stack>
-      <Divider my="xs" />
       <Group justify="right">
         <Button onClick={handleImportFile} disabled={!(file || url)}>
           Import

@@ -1,28 +1,32 @@
 import React from "react";
 import dynamic from "next/dynamic";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { useMantineColorScheme } from "@mantine/core";
 import { ThemeProvider } from "styled-components";
+import { NextSeo } from "next-seo";
 import toast from "react-hot-toast";
 import { darkTheme, lightTheme } from "src/constants/theme";
+import useGraph from "src/containers/Editor/components/views/GraphView/stores/useGraph";
 import { Toolbar } from "src/containers/Toolbar";
 import useFile from "src/store/useFile";
-import useGraph from "src/store/useGraph";
+import type { LayoutDirection } from "src/types/graph";
 
 interface EmbedMessage {
   data: {
     json?: string;
     options?: {
       theme?: "light" | "dark";
-      direction?: "LEFT" | "RIGHT" | "DOWN" | "UP";
+      direction?: LayoutDirection;
     };
   };
 }
 
-const Graph = dynamic(() => import("src/containers/Views/GraphView").then(c => c.Graph), {
-  ssr: false,
-});
+const GraphView = dynamic(
+  () => import("src/containers/Editor/components/views/GraphView").then(c => c.GraphView),
+  {
+    ssr: false,
+  }
+);
 
 const WidgetPage = () => {
   const { query, push, isReady } = useRouter();
@@ -68,12 +72,10 @@ const WidgetPage = () => {
 
   return (
     <>
-      <Head>
-        <meta name="robots" content="noindex,nofollow" />
-      </Head>
+      <NextSeo noindex />
       <ThemeProvider theme={theme === "dark" ? darkTheme : lightTheme}>
         <Toolbar isWidget />
-        <Graph isWidget />
+        <GraphView isWidget />
       </ThemeProvider>
     </>
   );

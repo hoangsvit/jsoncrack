@@ -2,7 +2,7 @@ import React from "react";
 import type { ModalProps } from "@mantine/core";
 import { Stack, Modal, Select, ScrollArea } from "@mantine/core";
 import { CodeHighlight } from "@mantine/code-highlight";
-import { gaEvent } from "src/lib/utils/gaEvent";
+import { event as gaEvent } from "nextjs-google-analytics";
 import useJson from "src/store/useJson";
 
 enum Language {
@@ -47,7 +47,7 @@ const typeOptions = [
   },
 ];
 
-export const TypeModal: React.FC<ModalProps> = ({ opened, onClose }) => {
+export const TypeModal = ({ opened, onClose }: ModalProps) => {
   const getJson = useJson(state => state.getJson);
   const [type, setType] = React.useState("");
   const [selectedType, setSelectedType] = React.useState<Language>(Language.TypeScript);
@@ -97,7 +97,7 @@ export const TypeModal: React.FC<ModalProps> = ({ opened, onClose }) => {
           data={typeOptions}
           onChange={e => {
             setSelectedType(e as Language);
-            gaEvent("Type Modal", "generate", e as string);
+            gaEvent("generate_type", { label: e as Language });
           }}
           allowDeselect={false}
         />

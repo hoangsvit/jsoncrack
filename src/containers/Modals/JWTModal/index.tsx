@@ -1,11 +1,11 @@
 import React from "react";
 import type { ModalProps } from "@mantine/core";
-import { Modal, Button, Textarea, Divider, Group } from "@mantine/core";
+import { Modal, Button, Textarea, Group } from "@mantine/core";
 import { decode } from "jsonwebtoken";
-import { gaEvent } from "src/lib/utils/gaEvent";
+import { event as gaEvent } from "nextjs-google-analytics";
 import useFile from "src/store/useFile";
 
-export const JWTModal: React.FC<ModalProps> = ({ opened, onClose }) => {
+export const JWTModal = ({ opened, onClose }: ModalProps) => {
   const setContents = useFile(state => state.setContents);
   const [token, setToken] = React.useState("");
 
@@ -14,7 +14,7 @@ export const JWTModal: React.FC<ModalProps> = ({ opened, onClose }) => {
     const json = decode(token);
     setContents({ contents: JSON.stringify(json, null, 2) });
 
-    gaEvent("JWT Modal", "resolve");
+    gaEvent("resolve_jwt");
     setToken("");
     onClose();
   };
@@ -29,9 +29,10 @@ export const JWTModal: React.FC<ModalProps> = ({ opened, onClose }) => {
         minRows={5}
         data-autofocus
       />
-      <Divider my="md" />
-      <Group justify="right">
-        <Button onClick={resolve}>Resolve</Button>
+      <Group mt="xs" justify="right">
+        <Button onClick={resolve} disabled={!token}>
+          Resolve
+        </Button>
       </Group>
     </Modal>
   );

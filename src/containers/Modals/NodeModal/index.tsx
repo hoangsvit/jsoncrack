@@ -2,9 +2,9 @@ import React from "react";
 import type { ModalProps } from "@mantine/core";
 import { Modal, Stack, Text, ScrollArea, Button } from "@mantine/core";
 import { CodeHighlight } from "@mantine/code-highlight";
+import { event as gaEvent } from "nextjs-google-analytics";
 import { VscLock } from "react-icons/vsc";
-import { gaEvent } from "src/lib/utils/gaEvent";
-import useGraph from "src/store/useGraph";
+import useGraph from "src/containers/Editor/components/views/GraphView/stores/useGraph";
 import useModal from "src/store/useModal";
 
 const dataToString = (data: any) => {
@@ -17,7 +17,7 @@ const dataToString = (data: any) => {
   return JSON.stringify(text, replacer, 2);
 };
 
-export const NodeModal: React.FC<ModalProps> = ({ opened, onClose }) => {
+export const NodeModal = ({ opened, onClose }: ModalProps) => {
   const setVisible = useModal(state => state.setVisible);
   const nodeData = useGraph(state => dataToString(state.selectedNode?.text));
   const path = useGraph(state => state.selectedNode?.path || "");
@@ -26,7 +26,7 @@ export const NodeModal: React.FC<ModalProps> = ({ opened, onClose }) => {
     <Modal title="Node Content" size="auto" opened={opened} onClose={onClose} centered>
       <Stack py="sm" gap="sm">
         <Stack gap="xs">
-          <Text fz="sm" fw={700}>
+          <Text fz="xs" fw={500}>
             Content
           </Text>
           <ScrollArea.Autosize mah={250} maw={600}>
@@ -36,13 +36,13 @@ export const NodeModal: React.FC<ModalProps> = ({ opened, onClose }) => {
         <Button
           onClick={() => {
             setVisible("upgrade")(true);
-            gaEvent("Node Modal", "edit");
+            gaEvent("click_node_edit");
           }}
           rightSection={<VscLock strokeWidth={0.5} />}
         >
           Edit
         </Button>
-        <Text fz="sm" fw={700}>
+        <Text fz="xs" fw={500}>
           JSON Path
         </Text>
         <ScrollArea.Autosize maw={600}>

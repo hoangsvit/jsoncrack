@@ -1,13 +1,17 @@
 import React from "react";
 import dynamic from "next/dynamic";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { useMantineColorScheme } from "@mantine/core";
+import "@mantine/dropzone/styles.css";
 import styled, { ThemeProvider } from "styled-components";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Cookie from "js-cookie";
+import { NextSeo } from "next-seo";
+import { SEO } from "src/constants/seo";
 import { darkTheme, lightTheme } from "src/constants/theme";
-import { BottomBar } from "src/containers/Editor/BottomBar";
-import Panes from "src/containers/Editor/Panes";
+import { Editor } from "src/containers/Editor";
+import { BottomBar } from "src/containers/Editor/components/BottomBar";
+import { UpgradeModal } from "src/containers/Modals";
 import { Toolbar } from "src/containers/Toolbar";
 import useConfig from "src/store/useConfig";
 import useFile from "src/store/useFile";
@@ -39,11 +43,17 @@ export const StyledEditorWrapper = styled.div`
   overflow: hidden;
 `;
 
-const EditorPage: React.FC = () => {
+const EditorPage = () => {
   const { query, isReady } = useRouter();
   const { setColorScheme } = useMantineColorScheme();
   const checkEditorSession = useFile(state => state.checkEditorSession);
   const darkmodeEnabled = useConfig(state => state.darkmodeEnabled);
+  const [upgradeVisible, setUpgradeVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    const isUpgradeShown = Cookie.get("upgrade_shown");
+    if (!isUpgradeShown) setUpgradeVisible(true);
+  }, []);
 
   React.useEffect(() => {
     if (isReady) checkEditorSession(query?.json);
@@ -55,19 +65,28 @@ const EditorPage: React.FC = () => {
 
   return (
     <>
-      <Head>
-        <title>Editor | JSON Crack</title>
-        <link rel="canonical" href="https://jsoncrack.com/editor" />
-      </Head>
+      <NextSeo
+        {...SEO}
+        title="Editor | JSON Crack"
+        description="JSON Crack Editor is a tool for visualizing into graphs, analyzing, editing, formatting, querying, transforming and validating JSON, CSV, YAML, XML, and more."
+        canonical="https://jsoncrack.com/editor"
+      />
       <ThemeProvider theme={darkmodeEnabled ? darkTheme : lightTheme}>
         <QueryClientProvider client={queryClient}>
           <ExternalMode />
           <ModalController />
+          <UpgradeModal
+            opened={upgradeVisible}
+            onClose={() => {
+              setUpgradeVisible(false);
+              Cookie.set("upgrade_shown", "true", { expires: 1 });
+            }}
+          />
           <StyledEditorWrapper>
             <StyledPageWrapper>
               <Toolbar />
               <StyledEditorWrapper>
-                <Panes />
+                <Editor />
               </StyledEditorWrapper>
             </StyledPageWrapper>
             <BottomBar />

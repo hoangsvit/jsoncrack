@@ -1,23 +1,36 @@
 import React from "react";
 import { Menu, Flex, Text, SegmentedControl } from "@mantine/core";
 import { useHotkeys } from "@mantine/hooks";
+import styled from "styled-components";
+import { event as gaEvent } from "nextjs-google-analytics";
 import toast from "react-hot-toast";
 import { CgChevronDown } from "react-icons/cg";
+import { TiFlowMerge } from "react-icons/ti";
 import { VscExpandAll, VscCollapseAll, VscTarget } from "react-icons/vsc";
+import useGraph from "src/containers/Editor/components/views/GraphView/stores/useGraph";
 import { ViewMode } from "src/enums/viewMode.enum";
 import useToggleHide from "src/hooks/useToggleHide";
-import { gaEvent } from "src/lib/utils/gaEvent";
-import { getNextDirection } from "src/lib/utils/graph/getNextDirection";
 import useConfig from "src/store/useConfig";
-import useGraph from "src/store/useGraph";
-import * as Styles from "./styles";
+import type { LayoutDirection } from "src/types/graph";
+import { StyledToolElement } from "./styles";
 
-function rotateLayout(direction: "LEFT" | "RIGHT" | "DOWN" | "UP") {
+const StyledFlowIcon = styled(TiFlowMerge)<{ rotate: number }>`
+  transform: rotate(${({ rotate }) => `${rotate}deg`});
+`;
+
+const getNextDirection = (direction: LayoutDirection) => {
+  if (direction === "RIGHT") return "DOWN";
+  if (direction === "DOWN") return "LEFT";
+  if (direction === "LEFT") return "UP";
+  return "RIGHT";
+};
+
+const rotateLayout = (direction: LayoutDirection) => {
   if (direction === "LEFT") return 90;
   if (direction === "UP") return 180;
   if (direction === "RIGHT") return 270;
   return 360;
-}
+};
 
 export const ViewMenu = () => {
   const { validateHiddenNodes } = useToggleHide();
@@ -65,11 +78,11 @@ export const ViewMenu = () => {
   return (
     <Menu shadow="md" closeOnItemClick={false} withArrow>
       <Menu.Target>
-        <Styles.StyledToolElement onClick={() => gaEvent("View Menu", "open menu")}>
+        <StyledToolElement onClick={() => gaEvent("show_view_menu")}>
           <Flex align="center" gap={3}>
             View <CgChevronDown />
           </Flex>
-        </Styles.StyledToolElement>
+        </StyledToolElement>
       </Menu.Target>
       <Menu.Dropdown>
         <SegmentedControl
@@ -78,7 +91,7 @@ export const ViewMenu = () => {
           value={viewMode}
           onChange={e => {
             setViewMode(e as ViewMode);
-            gaEvent("View Menu", "change view mode", e as string);
+            gaEvent("change_view_mode", { label: e });
           }}
           data={[
             { value: ViewMode.Graph, label: "Graph" },
@@ -93,9 +106,9 @@ export const ViewMenu = () => {
               fz={12}
               onClick={() => {
                 toggleDirection();
-                gaEvent("View Menu", "rotate layout");
+                gaEvent("rotate_layout", { label: direction });
               }}
-              leftSection={<Styles.StyledFlowIcon rotate={rotateLayout(direction || "RIGHT")} />}
+              leftSection={<StyledFlowIcon rotate={rotateLayout(direction || "RIGHT")} />}
               rightSection={
                 <Text ml="md" fz={10} c="dimmed">
                   {coreKey} Shift D
@@ -108,7 +121,7 @@ export const ViewMenu = () => {
               fz={12}
               onClick={() => {
                 toggleExpandCollapseGraph();
-                gaEvent("View Menu", "expand collapse graph");
+                gaEvent("expand_collapse_graph", { label: graphCollapsed ? "expand" : "collapse" });
               }}
               leftSection={graphCollapsed ? <VscExpandAll /> : <VscCollapseAll />}
               rightSection={

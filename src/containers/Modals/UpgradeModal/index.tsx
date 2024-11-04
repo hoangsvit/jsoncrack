@@ -1,109 +1,106 @@
 import React from "react";
 import type { ModalProps } from "@mantine/core";
-import {
-  Button,
-  Image,
-  Radio,
-  Modal,
-  Text,
-  Stack,
-  Tooltip,
-  Flex,
-  Badge,
-  Divider,
-  CheckIcon,
-} from "@mantine/core";
-import { gaEvent } from "src/lib/utils/gaEvent";
-import { PRICING } from "src/pages/pricing";
-import useUser from "src/store/useUser";
+import { Text, List, Button, Modal, Flex, Box, ThemeIcon, Image, Paper } from "@mantine/core";
+import styled from "styled-components";
+import { IoMdCheckmarkCircleOutline } from "react-icons/io";
+import { MdChevronRight } from "react-icons/md";
 
-const overlayLinks = {
-  monthly:
-    "https://herowand.lemonsqueezy.com/buy/ce30521f-c7cc-44f3-9435-995d3260ba22?embed=1&media=0&logo=0&desc=0&discount=0&enabled=67805",
-  annual:
-    "https://herowand.lemonsqueezy.com/buy/577928ea-fb09-4076-9307-3e5931b35ad0?embed=1&media=0&logo=0&desc=0&discount=0&enabled=82417",
-};
+const StyledPaper = styled(Paper)<any>`
+  --bg-color: ${({ theme }) => theme.GRID_BG_COLOR};
+  --line-color-1: ${({ theme }) => theme.GRID_COLOR_PRIMARY};
+  --line-color-2: ${({ theme }) => theme.GRID_COLOR_SECONDARY};
 
-export const UpgradeModal: React.FC<ModalProps> = ({ opened, onClose }) => {
-  const [plan, setPlan] = React.useState<string>("annual");
-  const user = useUser(state => state.user);
+  background-color: var(--bg-color);
+  background-image: linear-gradient(var(--line-color-1) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, var(--line-color-1) 1.5px, transparent 1.5px),
+    linear-gradient(var(--line-color-2) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-color-2) 1px, transparent 1px);
+  background-position:
+    -1.5px -1.5px,
+    -1.5px -1.5px,
+    -1px -1px,
+    -1px -1px;
+  background-size:
+    100px 100px,
+    100px 100px,
+    20px 20px,
+    20px 20px;
 
-  const handleSelect = () => {
-    const link = new URL(overlayLinks[plan]);
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.1);
+  align-self: center;
+`;
 
-    if (user?.email) {
-      link.searchParams.append("checkout[email]", user.email);
-    }
-
-    if (user?.user_metadata.display_name) {
-      link.searchParams.append("checkout[name]", user.user_metadata.display_name);
-    }
-
-    gaEvent("Premium Modal", "click select", plan);
-    window.open(link.toString(), "_blank");
-  };
-
+export const UpgradeModal = ({ opened, onClose }: ModalProps) => {
   return (
-    <Modal size="md" opened={opened} onClose={onClose} centered zIndex={202}>
-      <Flex justify="center" gap="xl" mx="auto">
-        <Image src="./assets/pacman.png" radius="md" w={50} alt="green tetris block" />
-        <Image src="./assets/tetris.png" radius="md" w={50} alt="yellow tetris block" />
-      </Flex>
-      <Text fw="bold" fz="xl" ta="center" my="lg">
-        Unlock even more features!
-      </Text>
-      <Text fz="sm">
-        We&apos;ve developed a new editor for individuals & professionals who deal with data on a
-        regular basis.
-      </Text>
-      <Text mt="xs" fz="sm">
-        Upgrade your plan and take advantage of improved speed, enhanced readability, and a more
-        compact design.
-      </Text>
-
-      <Radio.Group value={plan} onChange={setPlan} mt="md" label="Choose one:">
-        <Stack mt="xs" gap="xs">
-          <Flex align="center" justify="space-between">
-            <Radio
-              icon={CheckIcon}
-              value="annual"
-              label={
-                <Flex align="center" w="100%" justify="space-between">
-                  <Text>1 Year</Text>
-                  <Badge ml="xs" size="xs" color="green">
-                    Save 16%
-                  </Badge>
-                </Flex>
-              }
-            />
-            <Text c="dimmed" fz="sm">
-              ${PRICING.ANNUAL * 12}
-            </Text>
-          </Flex>
-          <Flex align="center" justify="space-between">
-            <Radio icon={CheckIcon} value="monthly" label={<Text>1 Month</Text>} />
-            <Text c="dimmed" fz="sm">
-              ${PRICING.MONTHLY}
-            </Text>
-          </Flex>
-        </Stack>
-      </Radio.Group>
-
-      <Divider my="xs" />
-      <Flex justify="space-between">
-        <Button color="gray" variant="subtle" onClick={onClose}>
-          Back
-        </Button>
-        <Tooltip
-          label="You will be taken to the checkout screen"
-          position="bottom"
-          fz="xs"
-          withArrow
-        >
-          <Button onClick={handleSelect} color="blue" px="xl">
-            Select
+    <Modal
+      title={
+        <Flex align="center" gap="8">
+          <ThemeIcon variant="transparent">
+            <Image src="https://todiagram.com/logo.svg" alt="ToDiagram" width={20} height={20} />
+          </ThemeIcon>
+          <Text fz="24" fw={600}>
+            Get more with ToDiagram
+          </Text>
+        </Flex>
+      }
+      size="1000"
+      opened={opened}
+      onClose={onClose}
+      zIndex={1001}
+      centered
+      radius="lg"
+    >
+      <Flex align="start">
+        <Box px="lg" pb="lg">
+          <Text fz="sm" mb="md">
+            More productivity. More power. Our most-requested features are now available on a
+            refined platform.
+          </Text>
+          <Text fz="md" fw={500} mb="sm">
+            Here&apos;s what you get with ToDiagram:
+          </Text>
+          <List spacing="6" fz="md" icon={<IoMdCheckmarkCircleOutline size="24" color="#16a34a" />}>
+            <List.Item>Load up to 4 MB data</List.Item>
+            <List.Item>Edit data on diagrams</List.Item>
+            <List.Item>Compare data</List.Item>
+            <List.Item>AI-Powered filter</List.Item>
+            <List.Item>Customizable theme</List.Item>
+            <List.Item>Editor tabs</List.Item>
+            <List.Item>5X Faster loading</List.Item>
+            <List.Item>Store 200 Documents</List.Item>
+          </List>
+          <Text fz="md" my="sm">
+            <Text component="span" inherit fw={500}>
+              Cancel anytime.
+            </Text>{" "}
+            Pay monthly or annually.
+          </Text>
+          <Button
+            component="a"
+            href="https://todiagram.com?utm_source=app&utm_medium=upgrade_modal"
+            target="_blank"
+            rel="noopener"
+            color="green"
+            fullWidth
+            mt="md"
+            size="md"
+            fw={500}
+            radius="md"
+            rightSection={<MdChevronRight size="24" />}
+          >
+            Get Started
           </Button>
-        </Tooltip>
+        </Box>
+        <StyledPaper ml="md" withBorder p="16">
+          <Image
+            miw="420"
+            mih="420"
+            mah="500"
+            src="/assets/todiagram_img.webp"
+            alt="ToDiagram"
+            fit="contain"
+          />
+        </StyledPaper>
       </Flex>
     </Modal>
   );
