@@ -13,31 +13,46 @@ import {
   Image,
   Divider,
 } from "@mantine/core";
+import Cookie from "js-cookie";
 import { LuCrown, LuTrendingUp } from "react-icons/lu";
+import useConfig from "src/store/useConfig";
 
 export const UpgradeModal = ({ opened, onClose }: ModalProps) => {
+  const darkmodeEnabled = useConfig(state => state.darkmodeEnabled);
+
+  const handleCloseModal = () => {
+    Cookie.set("upgrade_shown", "true", { expires: 3 });
+    onClose();
+  };
+
   return (
     <Modal
-      size="800"
+      size="700"
       opened={opened}
-      onClose={onClose}
+      onClose={handleCloseModal}
       zIndex={1001}
       centered
       radius="lg"
       withCloseButton={false}
       styles={{ body: { padding: 0 } }}
-      overlayProps={{ blur: 1 }}
+      overlayProps={{ blur: 2 }}
     >
       <FocusTrap.InitialFocus />
       <Flex>
-        <Image src="./assets/todiagram_img.webp" alt="todiagram" w="350" fit="contain" px="lg" />
+        <Image
+          src={`/assets/hp-${darkmodeEnabled ? "dark" : "light"}.png`}
+          alt="diagram"
+          maw={300}
+          height="auto"
+          style={{ objectPosition: "left" }}
+        />
         <Divider orientation="vertical" />
         <Stack gap="24" px="40" py="20">
           <Flex justify="space-between">
             <Title c="bright" fw="500" fz="24">
               Upgrade to unlock all features
             </Title>
-            <CloseButton onClick={onClose} />
+            <CloseButton onClick={handleCloseModal} />
           </Flex>
           <Flex gap="20">
             <ThemeIcon color="violet" variant="light" size="xl" radius="xl">
@@ -45,11 +60,10 @@ export const UpgradeModal = ({ opened, onClose }: ModalProps) => {
             </ThemeIcon>
             <Stack gap="4">
               <Title c="gray" order={3} fw="500" fz="16">
-                Accurate & beautiful diagrams
+                Load up to 4 MBs
               </Title>
               <Text fz="14" c="dimmed">
-                New diagram structure helps you to understand the data, modify from diagrams,
-                customize colors, preview images.
+                We made it easy to visualize, format, and explore JSON data, faster than ever.
               </Text>
             </Stack>
           </Flex>
@@ -59,11 +73,10 @@ export const UpgradeModal = ({ opened, onClose }: ModalProps) => {
             </ThemeIcon>
             <Stack gap="4">
               <Title c="gray" order={3} fw="500" fz="16">
-                Larger file support, faster performance
+                Powerful, colorful editor
               </Title>
               <Text fz="14" c="dimmed">
-                Load up to 4MB without performance issues, open multiple documents, and save work
-                faster.
+                Modify data, preview images, inspect nodes, and more!
               </Text>
             </Stack>
           </Flex>
@@ -77,9 +90,9 @@ export const UpgradeModal = ({ opened, onClose }: ModalProps) => {
             radius="md"
             leftSection={<LuCrown />}
           >
-            Try premium for free
+            Try premium for free, no registration
           </Button>
-          <Button size="md" variant="subtle" color="gray" radius="md" onClick={onClose}>
+          <Button size="md" variant="subtle" color="gray" radius="md" onClick={handleCloseModal}>
             Maybe later
           </Button>
         </Stack>
