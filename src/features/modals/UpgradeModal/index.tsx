@@ -1,20 +1,7 @@
 import React from "react";
 import type { ModalProps } from "@mantine/core";
-import {
-  Text,
-  Button,
-  Modal,
-  Flex,
-  Stack,
-  Title,
-  ThemeIcon,
-  CloseButton,
-  FocusTrap,
-  Image,
-  Divider,
-} from "@mantine/core";
+import { Button, Modal, FocusTrap, Image, Text, Group, Divider } from "@mantine/core";
 import Cookie from "js-cookie";
-import { LuCrown, LuTrendingUp } from "react-icons/lu";
 import useConfig from "src/store/useConfig";
 
 export const UpgradeModal = ({ opened, onClose }: ModalProps) => {
@@ -27,76 +14,54 @@ export const UpgradeModal = ({ opened, onClose }: ModalProps) => {
 
   return (
     <Modal
-      size="700"
+      size="500"
       opened={opened}
       onClose={handleCloseModal}
       zIndex={1001}
       centered
-      radius="lg"
-      withCloseButton={false}
-      styles={{ body: { padding: 0 } }}
+      radius="md"
       overlayProps={{ blur: 2 }}
+      withCloseButton={false}
+      closeOnClickOutside={false}
     >
       <FocusTrap.InitialFocus />
-      <Flex>
-        <Image
-          src={`/assets/hp-${darkmodeEnabled ? "dark" : "light"}.png`}
-          alt="diagram"
-          maw={300}
-          height="auto"
-          style={{ objectPosition: "left" }}
-        />
-        <Divider orientation="vertical" />
-        <Stack gap="24" px="40" py="20">
-          <Flex justify="space-between">
-            <Title c="bright" fw="500" fz="24">
-              Upgrade to unlock all features
-            </Title>
-            <CloseButton onClick={handleCloseModal} />
-          </Flex>
-          <Flex gap="20">
-            <ThemeIcon color="violet" variant="light" size="xl" radius="xl">
-              <LuCrown size="20" />
-            </ThemeIcon>
-            <Stack gap="4">
-              <Title c="gray" order={3} fw="500" fz="16">
-                Load larger files
-              </Title>
-              <Text fz="14" c="dimmed">
-                We made it easy to visualize, format, and explore JSON data, faster than ever.
-              </Text>
-            </Stack>
-          </Flex>
-          <Flex gap="20">
-            <ThemeIcon color="violet" variant="light" size="xl" radius="xl">
-              <LuTrendingUp size="20" />
-            </ThemeIcon>
-            <Stack gap="4">
-              <Title c="gray" order={3} fw="500" fz="16">
-                Powerful, colorful editor
-              </Title>
-              <Text fz="14" c="dimmed">
-                Modify data, preview images, inspect nodes, and more!
-              </Text>
-            </Stack>
-          </Flex>
-          <Button
-            component="a"
-            href="https://todiagram.com/editor?utm_source=jsoncrack&utm_medium=upgrade_modal"
-            target="_blank"
-            mb="-16"
-            color="violet"
-            size="md"
-            radius="md"
-            leftSection={<LuCrown />}
-          >
-            Try premium for free, no registration
-          </Button>
-          <Button size="md" variant="subtle" color="gray" radius="md" onClick={handleCloseModal}>
-            Maybe later
-          </Button>
-        </Stack>
-      </Flex>
+      <Image
+        src={`/assets/diagram-${darkmodeEnabled ? "dark" : "light"}.png`}
+        alt="diagram"
+        width="auto"
+        style={{
+          filter: "drop-shadow(4px -3px 3px rgba(0, 0, 0, 0.2))",
+        }}
+      />
+      <Divider mx="-md" />
+      <Text ta="center" fz="md" mt="lg">
+        We&apos;ve been working on something big -{" "}
+        <Text component="span" fw="bold" inherit>
+          Ready to explore?
+        </Text>
+      </Text>
+      <Group mt="md" justify="space-between">
+        <Button variant="default" size="md" onClick={handleCloseModal}>
+          Not now
+        </Button>
+        <Button
+          component="a"
+          href="https://todiagram.com/editor?utm_source=jsoncrack&utm_medium=upgrade_modal"
+          target="_blank"
+          color="red"
+          size="md"
+          leftSection={
+            <Image
+              src="https://todiagram.com/logo.svg"
+              alt="logo"
+              w={20}
+              style={{ filter: "grayscale(1) brightness(0) invert(1)" }}
+            />
+          }
+        >
+          Try ToDiagram!
+        </Button>
+      </Group>
     </Modal>
   );
 };
