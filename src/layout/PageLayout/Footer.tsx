@@ -8,7 +8,7 @@ import { JSONCrackLogo } from "../JsonCrackLogo";
 
 export const Footer = () => {
   return (
-    <Container mt={60} px={60} pb="xl" bg="black" fluid>
+    <Container w="100%" mt={60} px={60} pb="xl" bg="black" fluid>
       <Divider color="gray.3" mb="xl" mx={-60} />
       <Flex justify="space-between">
         <Stack gap={4} visibleFrom="sm">
@@ -39,7 +39,12 @@ export const Footer = () => {
             >
               Open Source
             </Anchor>
-            <Anchor href="https://todiagram.com" fz="sm" c="gray.5" rel="noopener">
+            <Anchor
+              href="https://todiagram.com?utm_source=jsoncrack&utm_medium=footer"
+              fz="sm"
+              c="gray.5"
+              rel="noopener"
+            >
               ToDiagram
             </Anchor>
           </Stack>

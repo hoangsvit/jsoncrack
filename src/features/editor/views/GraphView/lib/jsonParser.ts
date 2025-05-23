@@ -1,5 +1,5 @@
 import { parseTree } from "jsonc-parser";
-import type { EdgeData, NodeData } from "src/types/graph";
+import type { EdgeData, NodeData } from "../../../../../types/graph";
 import { addEdgeToGraph } from "./utils/addEdgeToGraph";
 import { addNodeToGraph } from "./utils/addNodeToGraph";
 import { getNodePath } from "./utils/getNodePath";
@@ -73,10 +73,26 @@ export function parser(jsonStr: string): Graph {
       }
     }
 
-    states.graph.nodes = states.graph.nodes.map(node => ({
+    // filter parent nodes that have no children
+    // not the best way to do this, but it works
+    const filteredNodes = states.graph.nodes.filter(node => {
+      return !(node.data.isParent && node.data.childrenCount === 0);
+    });
+
+    // add path to nodes
+    states.graph.nodes = filteredNodes.map(node => ({
       ...node,
       path: getNodePath(states.graph.nodes, states.graph.edges, node.id),
     }));
+
+    // filter edges that have no from or to node (since we filtered empty parent nodes)
+    states.graph.edges = states.graph.edges.filter(edge => {
+      const fromNode = states.graph.nodes.find(node => node.id === edge.from);
+      const toNode = states.graph.nodes.find(node => node.id === edge.to);
+
+      if (!fromNode || !toNode) return false;
+      return true;
+    });
 
     return states.graph;
   } catch (error) {

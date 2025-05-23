@@ -3,15 +3,14 @@ import { Group, Text } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import toast from "react-hot-toast";
 import { VscCircleSlash, VscFiles } from "react-icons/vsc";
-import { FileFormat } from "src/enums/file.enum";
-import useFile from "src/store/useFile";
+import { FileFormat } from "../../enums/file.enum";
+import useFile from "../../store/useFile";
 
 export const FullscreenDropzone = () => {
   const setContents = useFile(state => state.setContents);
 
   return (
     <Dropzone.FullScreen
-      maxSize={300 * 1024}
       maxFiles={1}
       accept={[
         "application/json",

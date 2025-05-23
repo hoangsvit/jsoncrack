@@ -1,6 +1,7 @@
 import type { DefaultTheme } from "styled-components";
 import styled from "styled-components";
 import { LinkItUrl } from "react-linkify-it";
+import { NODE_DIMENSIONS } from "../../../../../constants/graph";
 
 type TextColorFn = {
   theme: DefaultTheme;
@@ -48,7 +49,7 @@ export const StyledForeignObject = styled.foreignObject<{ $isObject?: boolean }>
   }
 
   .highlight {
-    background: rgba(255, 214, 0, 0.3);
+    background: rgba(255, 214, 0, 0.15);
   }
 
   .renderVisible {
@@ -64,31 +65,39 @@ export const StyledForeignObject = styled.foreignObject<{ $isObject?: boolean }>
 `;
 
 export const StyledKey = styled.span<{ $parent?: boolean; $type: string; $value?: string }>`
-  display: inline;
+  display: ${({ $parent }) => ($parent ? "flex" : "inline")};
+  align-items: center;
+  justify-content: center; // Always center for parent nodes
   flex: 1;
+  min-width: 0;
+  height: ${({ $parent }) => ($parent ? `${NODE_DIMENSIONS.PARENT_HEIGHT}px` : "auto")};
+  line-height: ${({ $parent }) => ($parent ? `${NODE_DIMENSIONS.PARENT_HEIGHT}px` : "inherit")};
+  padding: 0; // Remove padding
   color: ${({ theme, $type, $parent = false, $value = "" }) =>
     getTextColor({ $parent, $type, $value, theme })};
-  font-size: ${({ $parent }) => $parent && "14px"};
   overflow: hidden;
   text-overflow: ellipsis;
-  padding: ${({ $type }) => $type !== "object" && "10px"};
   white-space: nowrap;
 `;
 
 export const StyledRow = styled.span<{ $value: string }>`
-  padding: 0 10px;
+  padding: 3px 10px;
+  height: ${NODE_DIMENSIONS.ROW_HEIGHT}px;
+  line-height: 18px;
   color: ${({ theme, $value }) => getTextColor({ $value, theme })};
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-
-  &:first-of-type {
-    padding-top: 10px;
-  }
+  border-bottom: 1px solid ${({ theme }) => theme.NODE_COLORS.DIVIDER};
+  box-sizing: border-box;
 
   &:last-of-type {
-    padding-bottom: 10px;
+    border-bottom: none;
+  }
+
+  .searched & {
+    border-bottom: 1px solid ${({ theme }) => theme.TEXT_POSITIVE};
   }
 `;
 

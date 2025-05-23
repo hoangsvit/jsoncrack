@@ -1,7 +1,7 @@
 <!-- PROJECT LOGO -->
 <p align="center">
   <a href="https://github.com/AykutSarac/jsoncrack.com">
-   <img src="./public/assets/logo.svg" height="50" alt="Logo">
+   <img src="./public/assets/192.png" height="50" alt="Logo">
   </a>
 
   <h1 align="center">JSON Crack</h1>
@@ -86,7 +86,7 @@ Here is what you need to be able to run JSON Crack.
 
 ### Setup
 
-1. Clone the repo into a public GitHub repository (or fork https://github.com/AykutSarac/jsoncrack.com/fork). If you plan to distribute the code, read the [`LICENSE`](/LICENSE) for additional details.
+1. Clone the repo into a public GitHub repository (or fork https://github.com/AykutSarac/jsoncrack.com/fork). If you plan to distribute the code, read the [`LICENSE`](/LICENSE.md) for additional details.
 
    ```sh
    git clone https://github.com/AykutSarac/jsoncrack.com.git
@@ -98,7 +98,7 @@ Here is what you need to be able to run JSON Crack.
    cd jsoncrack.com
    ```
 
-3. Install packages with yarn
+3. Install packages
 
    ```sh
    pnpm install
@@ -131,4 +131,4 @@ docker compose up
 
 ## License
 
-See [`LICENSE`](/LICENSE) for more information.
+See [`LICENSE`](/LICENSE.md) for more information.

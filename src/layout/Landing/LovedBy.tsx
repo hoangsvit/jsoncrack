@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Container, Flex, Text, Image } from "@mantine/core";
+import { Button, Container, Flex, Text } from "@mantine/core";
 import styled from "styled-components";
 import CountUp from "react-countup";
 import { FaGithub, FaHackerNews, FaLinkedin, FaProductHunt, FaXTwitter } from "react-icons/fa6";
@@ -61,7 +61,7 @@ const Featured = ({ stars }: LovedByProps) => {
 
 export const LovedBy = ({ stars }: LovedByProps) => {
   return (
-    <Container pos="relative" mx="auto" py={80}>
+    <Container pos="relative" mx="auto" pb="20" pt={60}>
       <Featured stars={stars} />
       <Flex wrap="wrap" justify="center" gap="md" mt="md">
         <Button
@@ -83,23 +83,6 @@ export const LovedBy = ({ stars }: LovedByProps) => {
           rel="noopener"
         >
           Share on LinkedIn
-        </Button>
-        <Button
-          component="a"
-          href="https://todiagram.com"
-          color="#fe5e49"
-          leftSection={
-            <Image
-              src="https://todiagram.com/logo.svg"
-              loading="lazy"
-              alt="Todiagram Logo"
-              w={14}
-              h={14}
-              style={{ filter: "brightness(0) saturate(100%) invert(100%)" }}
-            />
-          }
-        >
-          ToDiagram
         </Button>
       </Flex>
     </Container>

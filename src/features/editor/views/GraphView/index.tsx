@@ -1,22 +1,26 @@
 import React from "react";
-import { LoadingOverlay } from "@mantine/core";
+import { Box, LoadingOverlay, useComputedColorScheme } from "@mantine/core";
+import { useDebouncedValue } from "@mantine/hooks";
 import styled from "styled-components";
 import debounce from "lodash.debounce";
 import { Space } from "react-zoomable-ui";
 import { Canvas } from "reaflow";
 import type { ElkRoot } from "reaflow/dist/layout/useLayout";
 import { useLongPress } from "use-long-press";
-import { CustomNode } from "src/features/editor/views/GraphView/CustomNode";
-import useGraph from "src/features/editor/views/GraphView/stores/useGraph";
-import useToggleHide from "src/hooks/useToggleHide";
-import useConfig from "src/store/useConfig";
+import useToggleHide from "../../../../hooks/useToggleHide";
+import useConfig from "../../../../store/useConfig";
 import { CustomEdge } from "./CustomEdge";
+import { CustomNode } from "./CustomNode";
 import { NotSupported } from "./NotSupported";
+import { OptionsMenu } from "./OptionsMenu";
+import { SecureInfo } from "./SecureInfo";
+import { ZoomControl } from "./ZoomControl";
+import useGraph from "./stores/useGraph";
 
 const StyledEditorWrapper = styled.div<{ $widget: boolean; $showRulers: boolean }>`
   position: absolute;
   width: 100%;
-  height: ${({ $widget }) => ($widget ? "calc(100vh - 40px)" : "calc(100vh - 67px)")};
+  height: ${({ $widget }) => ($widget ? "100vh" : "calc(100vh - 67px)")};
 
   --bg-color: ${({ theme }) => theme.GRID_BG_COLOR};
   --line-color-1: ${({ theme }) => theme.GRID_COLOR_PRIMARY};
@@ -59,10 +63,6 @@ const StyledEditorWrapper = styled.div<{ $widget: boolean; $showRulers: boolean 
     fill: ${({ theme }) => theme.BACKGROUND_NODE};
   }
 
-  @media only screen and (max-width: 768px) {
-    height: ${({ $widget }) => ($widget ? "calc(100vh - 40px)" : "100vh")};
-  }
-
   @media only screen and (max-width: 320px) {
     height: 100vh;
   }
@@ -83,6 +83,7 @@ const GraphCanvas = ({ isWidget }: GraphProps) => {
   const centerView = useGraph(state => state.centerView);
   const direction = useGraph(state => state.direction);
   const nodes = useGraph(state => state.nodes);
+  const colorScheme = useComputedColorScheme();
   const edges = useGraph(state => state.edges);
   const [paneWidth, setPaneWidth] = React.useState(2000);
   const [paneHeight, setPaneHeight] = React.useState(2000);
@@ -116,13 +117,14 @@ const GraphCanvas = ({ isWidget }: GraphProps) => {
       edge={p => <CustomEdge {...p} />}
       nodes={nodes}
       edges={edges}
+      arrow={null}
       maxHeight={paneHeight}
       maxWidth={paneWidth}
       height={paneHeight}
       width={paneWidth}
       direction={direction}
       layoutOptions={layoutOptions}
-      key={direction}
+      key={[direction, colorScheme].join("-")}
       pannable={false}
       zoomable={false}
       animated={false}
@@ -134,15 +136,14 @@ const GraphCanvas = ({ isWidget }: GraphProps) => {
   );
 };
 
-const SUPPORTED_LIMIT = +(process.env.NEXT_PUBLIC_NODE_LIMIT as string);
-
 export const GraphView = ({ isWidget = false }: GraphProps) => {
   const setViewPort = useGraph(state => state.setViewPort);
   const viewPort = useGraph(state => state.viewPort);
-  const aboveSupportedLimit = useGraph(state => state.nodes.length > SUPPORTED_LIMIT);
+  const aboveSupportedLimit = useGraph(state => state.aboveSupportedLimit);
   const loading = useGraph(state => state.loading);
   const gesturesEnabled = useConfig(state => state.gesturesEnabled);
   const rulersEnabled = useConfig(state => state.rulersEnabled);
+  const [debouncedLoading] = useDebouncedValue(loading, 300);
 
   const callback = React.useCallback(() => {
     const canvas = document.querySelector(".jsoncrack-canvas") as HTMLDivElement | null;
@@ -165,13 +166,13 @@ export const GraphView = ({ isWidget = false }: GraphProps) => {
     setViewPort(viewPort!);
   }, 300);
 
-  if (aboveSupportedLimit) {
-    return <NotSupported />;
-  }
-
   return (
-    <>
-      <LoadingOverlay visible={loading} />
+    <Box pos="relative" h="100%" w="100%">
+      {aboveSupportedLimit && <NotSupported />}
+      <LoadingOverlay visible={debouncedLoading} />
+      {!isWidget && <OptionsMenu />}
+      {!isWidget && <SecureInfo />}
+      <ZoomControl />
       <StyledEditorWrapper
         $widget={isWidget}
         onContextMenu={e => e.preventDefault()}
@@ -191,6 +192,6 @@ export const GraphView = ({ isWidget = false }: GraphProps) => {
           <GraphCanvas isWidget={isWidget} />
         </Space>
       </StyledEditorWrapper>
-    </>
+    </Box>
   );
 };
