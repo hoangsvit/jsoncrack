@@ -1,17 +1,12 @@
 import React from "react";
-import Link from "next/link";
-import { Flex, Popover, Text } from "@mantine/core";
+import { Flex, Menu, Popover, Text } from "@mantine/core";
 import styled from "styled-components";
 import { event as gaEvent } from "nextjs-google-analytics";
 import { BiSolidDockLeft } from "react-icons/bi";
-import {
-  VscCheck,
-  VscError,
-  VscFeedback,
-  VscRunAll,
-  VscSync,
-  VscSyncIgnored,
-} from "react-icons/vsc";
+import { IoMdCheckmark } from "react-icons/io";
+import { MdArrowUpward } from "react-icons/md";
+import { VscCheck, VscError, VscRunAll, VscSync, VscSyncIgnored } from "react-icons/vsc";
+import { formats } from "../../enums/file.enum";
 import useConfig from "../../store/useConfig";
 import useFile from "../../store/useFile";
 import useGraph from "./views/GraphView/stores/useGraph";
@@ -85,9 +80,10 @@ export const BottomBar = () => {
   const liveTransformEnabled = useConfig(state => state.liveTransformEnabled);
   const error = useFile(state => state.error);
   const setContents = useFile(state => state.setContents);
-  const nodeCount = useGraph(state => state.nodes.length);
   const toggleFullscreen = useGraph(state => state.toggleFullscreen);
   const fullscreen = useGraph(state => state.fullscreen);
+  const setFormat = useFile(state => state.setFormat);
+  const currentFormat = useFile(state => state.format);
 
   const toggleEditor = () => {
     toggleFullscreen(!fullscreen);
@@ -144,17 +140,28 @@ export const BottomBar = () => {
       </StyledLeft>
 
       <StyledRight>
-        <StyledBottomBarItem>Nodes: {nodeCount}</StyledBottomBarItem>
-        <Link
-          href="https://github.com/AykutSarac/jsoncrack.com/discussions"
-          target="_blank"
-          rel="noopener"
-        >
-          <StyledBottomBarItem>
-            <VscFeedback />
-            Feedback
-          </StyledBottomBarItem>
-        </Link>
+        <Menu offset={8}>
+          <Menu.Target>
+            <StyledBottomBarItem>
+              <Flex align="center" gap={2}>
+                <MdArrowUpward />
+                <Text size="xs">{currentFormat?.toUpperCase()}</Text>
+              </Flex>
+            </StyledBottomBarItem>
+          </Menu.Target>
+          <Menu.Dropdown>
+            {formats.map(format => (
+              <Menu.Item
+                key={format.value}
+                fz={12}
+                onClick={() => setFormat(format.value)}
+                rightSection={currentFormat === format.value && <IoMdCheckmark />}
+              >
+                {format.label}
+              </Menu.Item>
+            ))}
+          </Menu.Dropdown>
+        </Menu>
       </StyledRight>
     </StyledBottomBar>
   );

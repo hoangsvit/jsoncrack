@@ -11,6 +11,7 @@ import "allotment/dist/style.css";
 import { NextSeo } from "next-seo";
 import { SEO } from "../constants/seo";
 import { darkTheme, lightTheme } from "../constants/theme";
+import { Banner, BANNER_HEIGHT } from "../features/Banner";
 import { BottomBar } from "../features/editor/BottomBar";
 import { FullscreenDropzone } from "../features/editor/FullscreenDropzone";
 import { Toolbar } from "../features/editor/Toolbar";
@@ -31,7 +32,7 @@ const queryClient = new QueryClient({
 });
 
 export const StyledPageWrapper = styled.div`
-  height: calc(100vh - 27px);
+  height: 100vh;
   width: 100%;
 
   @media only screen and (max-width: 320px) {
@@ -49,11 +50,18 @@ export const StyledEditor = styled(Allotment)`
   position: relative !important;
   display: flex;
   background: ${({ theme }) => theme.BACKGROUND_SECONDARY};
-  height: calc(100vh - 67px);
+  height: ${`calc(100vh - 40px - ${BANNER_HEIGHT})`};
 
   @media only screen and (max-width: 320px) {
     height: 100vh;
   }
+`;
+
+const StyledTextEditor = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
 `;
 
 const TextEditor = dynamic(() => import("../features/editor/TextEditor"), {
@@ -93,6 +101,7 @@ const EditorPage = () => {
           <ModalController />
           <StyledEditorWrapper>
             <StyledPageWrapper>
+              {process.env.NEXT_PUBLIC_DISABLE_EXTERNAL_MODE === "true" ? null : <Banner />}
               <Toolbar />
               <StyledEditorWrapper>
                 <StyledEditor proportionalLayout={false}>
@@ -102,7 +111,10 @@ const EditorPage = () => {
                     maxSize={800}
                     visible={!fullscreen}
                   >
-                    <TextEditor />
+                    <StyledTextEditor>
+                      <TextEditor />
+                      <BottomBar />
+                    </StyledTextEditor>
                   </Allotment.Pane>
                   <Allotment.Pane minSize={0}>
                     <LiveEditor />
@@ -111,7 +123,6 @@ const EditorPage = () => {
                 <FullscreenDropzone />
               </StyledEditorWrapper>
             </StyledPageWrapper>
-            <BottomBar />
           </StyledEditorWrapper>
         </QueryClientProvider>
       </ThemeProvider>

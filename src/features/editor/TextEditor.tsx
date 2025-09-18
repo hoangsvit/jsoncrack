@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Editor, { type EditorProps, loader, type OnMount, useMonaco } from "@monaco-editor/react";
 import useConfig from "../../store/useConfig";
 import useFile from "../../store/useFile";
+import { BANNER_HEIGHT } from "../Banner";
 
 loader.config({
   paths: {
@@ -82,7 +83,7 @@ const TextEditor = () => {
           value={contents}
           options={editorOptions}
           onMount={handleMount}
-          onValidate={errors => setError(errors[0]?.message)}
+          onValidate={errors => setError(errors[0]?.message || "")}
           onChange={contents => setContents({ contents, skipUpdate: true })}
           loading={<LoadingOverlay visible />}
         />
@@ -102,7 +103,7 @@ const StyledEditorWrapper = styled.div`
 
 const StyledWrapper = styled.div`
   display: grid;
-  height: calc(100vh - 67px);
+  height: ${`calc(100vh - 67px - ${BANNER_HEIGHT})`};
   grid-template-columns: 100%;
   grid-template-rows: minmax(0, 1fr);
 `;
